@@ -246,10 +246,10 @@ int CellTrellis::AddCell() {
 
 	if (score > 0) {
 		for (list<Arc*>::iterator lIt = sPath.begin(); lIt!=sPath.end() ; ++lIt) { // THE ARCS HAVE TO BE CONVERTED BACK TO OPERATIONARCS
-			((Event*) *lIt)->Execute(mTree, &newCells); // MAYBE EXECUTE SHOULD TAKE THE TREE AS AN INPUT.
+			((Event*) *lIt)->Execute(mTree, &newCells, false); // MAYBE EXECUTE SHOULD TAKE THE TREE AS AN INPUT.
 		}
-		lout << "The tree has " << setw(0) <<  mTree->GetNumCells() << " cells." << endl;
-		lout << endl;  // Separate output from different iterations.
+//		lout << "The tree has " << setw(0) <<  mTree->GetNumCells() << " cells." << endl;
+//		lout << endl;  // Separate output from different iterations.
 
 		// Replace the swap events.
 		// RemoveSwaps();

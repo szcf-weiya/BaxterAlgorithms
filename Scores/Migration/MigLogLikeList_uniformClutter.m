@@ -49,18 +49,18 @@ MIGRATION_PRIOR = 0.8;  % TODO: FIND A WAY TO COMPUTE THIS.
 area = aImData.imageWidth * aImData.imageHeight;
 
 % Find covariance matrix for the x- and y-displacements between two frames.
-if ~strcmpi(aImData.Get('TrackMotionModel'), 'none')
+if ~strcmpi(aImData.TrackMotionModel, 'none')
     % Saved covariance matrix.
     
     trackClassifierPath = FindFile('Classifiers', 'Migration',...
-        aImData.Get('TrackMotionModel'));
+        aImData.TrackMotionModel);
     tmp = load(trackClassifierPath);
     E = tmp.covarianceMatrix;
 else
     % Isotropic Brownian motion.
     
     % Standard deviations of x and y displacements in pixel units.
-    rmsSpeed = aImData.Get('TrackXSpeedStd');
+    rmsSpeed = aImData.TrackXSpeedStd;
     E = rmsSpeed^2 * eye(2);
 end
 
@@ -69,8 +69,8 @@ for t = 1:length(aBlobSeq)-1
     
     tBlobs1 = aBlobSeq{t};  % Blobs in current image.
     tBlobs2 = aBlobSeq{t+1};  % Blobs in next image.
-    n1 = length(tBlobs1);
-    n2 = length(tBlobs2);
+    n1 = size(tBlobs1, 1);
+    n2 = size(tBlobs2, 1);
     
     if isempty(tBlobs1) || isempty(tBlobs2)
         continue
@@ -80,10 +80,10 @@ for t = 1:length(aBlobSeq)-1
     negPrior = 1-posPrior;
     
     % Displacements.
-    pos1 = cat(1, tBlobs1.centroid);
+    pos1 = tBlobs1;
     X1 = repmat(pos1(:,1), 1, n2);
     Y1 = repmat(pos1(:,2), 1, n2);
-    pos2 = cat(1, tBlobs2.centroid);
+    pos2 = tBlobs2;
     X2 = repmat(pos2(:,1)', n1, 1);
     Y2 = repmat(pos2(:,2)', n1, 1);
     Dx = X2 - X1;

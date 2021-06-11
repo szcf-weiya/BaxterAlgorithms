@@ -21,3 +21,6 @@ variables.mat
 
 # System files on Mac.
 *.DS_Store
+
+# tmp res file
+tmp/

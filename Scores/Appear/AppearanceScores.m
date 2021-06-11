@@ -35,28 +35,29 @@ function oList = AppearanceScores(aBlobSeq, aImData)
 % See also:
 % DisappearanceScores, Track
 
-if aImData.Get('TrackPAppear') == 0 && ~aImData.Get('TrackMigInOut')
+if aImData.TrackPAppear == 0 && ~aImData.TrackMigInOut
     % There is no mechanism by which cells can disappear, so an empty list
     % is returned.
     oList = zeros(0,4);
     return
 end
 
-pixelStd = aImData.Get('TrackXSpeedStd');
+pixelStd = aImData.TrackXSpeedStd;
 
 % Pre-allocate a list that may be too long.
-oList = nan(length([aBlobSeq{2:end}]), 4);
+oList = nan(sum(cellfun('size', aBlobSeq(2:end), 1)), 4);
 cnt = 1;
 for t = 2:length(aBlobSeq)  % Cells cannot appear in the first image.
     for bIndex = 1:length(aBlobSeq{t})
-        b = aBlobSeq{t}(bIndex);
+        b = aBlobSeq{t}(bIndex, :);
         
         % Random appearance.
-        dprob = aImData.Get('TrackPAppear');
+        dprob = aImData.TrackPAppear;
         
         % Appearance through migration into the field of view.
-        if aImData.Get('TrackMigInOut')
-            [x,y] = b.GetPixelCoordinates();
+        if aImData.TrackMigInOut
+            % https://www.mathworks.com/matlabcentral/answers/16996-assign-multiple-variables
+            [x,y] = feval(@(x) x{:}, num2cell(b));
             
             % The probability that a cell in the image was outside the
             % image at the previous time point is the same as the
@@ -69,12 +70,12 @@ for t = 2:length(aBlobSeq)  % Cells cannot appear in the first image.
             % where a cell exits the image at one of the corners so that
             % there are cell pixels both above (or below) and to the right
             % (or to the left) of the corner.
+            % Now, x is a scalar, and hence max(x) = min(x)
             dprob = dprob + (1-dprob)*normcdf(1-max(x), 0, pixelStd);
             dprob = dprob + (1-dprob)*normcdf(min(x)-aImData.imageWidth, 0, pixelStd);
             dprob = dprob + (1-dprob)*normcdf(1-max(y), 0, pixelStd);
             dprob = dprob + (1-dprob)*normcdf(min(y)-aImData.imageHeight, 0, pixelStd);
         end
-        
         % Add scores to the list.
         if dprob > 0
             oList(cnt,1) = t;

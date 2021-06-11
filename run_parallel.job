@@ -1,0 +1,7 @@
+#!/bin/bash
+#PBS -N KTHSE
+#PBS -q large
+#PBS -k oe
+
+cd $HOME/KTH-SE
+$HOME/julia-1.4.1/bin/julia -p $np -L run.jl run_parallel.jl $nrep $parent_folder $folder

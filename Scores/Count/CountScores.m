@@ -30,7 +30,7 @@ function oList = CountScores(aBlobSeq, aImData, varargin)
 %    oList(:,3:12) - Log-probability that the blob contains 0 to 9 cells.
 %
 % References:
-% [1] Magnusson, K. E. G.; Jaldén, J.; Gilbert, P. M. & Blau, H. M. Global
+% [1] Magnusson, K. E. G.; Jaldï¿½n, J.; Gilbert, P. M. & Blau, H. M. Global
 %     linking of cell tracks using the Viterbi algorithm IEEE Trans. Med.
 %     Imag., 2015, 34, 1-19
 %
@@ -40,7 +40,7 @@ function oList = CountScores(aBlobSeq, aImData, varargin)
 % Parse property/value inputs.
 aCreateOutputFiles = GetArgs({'CreateOutputFiles'}, {false}, true, varargin);
 
-if ~strcmp(aImData.Get('countClassifier'), 'none')  % Use classifier.
+if ~strcmp(aImData.countClassifier, 'none')  % Use classifier.
     % Load classifier.
     clPath = GetClassifierPath('Count', aImData.Get('countClassifier'));
     cl = load(clPath);
@@ -51,14 +51,14 @@ if ~strcmp(aImData.Get('countClassifier'), 'none')  % Use classifier.
     % Perform classification.
     countProbs = Classify(cl, featureMat);
 else  % Use fixed probabilities from settings.
-    countProbs = zeros(length([aBlobSeq{:}]),3);
-    countProbs(:,1) = aImData.Get('pCnt0');
-    countProbs(:,2) = aImData.Get('pCnt1');
-    countProbs(:,3) = aImData.Get('pCnt2');
+    countProbs = zeros(sum(cellfun('size', aBlobSeq, 1)),3);
+    countProbs(:,1) = aImData.pCnt0;
+    countProbs(:,2) = aImData.pCnt1;
+    countProbs(:,3) = aImData.pCnt2;
 end
 
 % Extrapolate up to a cell count of 9.
-countProbs = ExtrapProbs(countProbs, 10, aImData.Get('pCntExtrap'));
+countProbs = ExtrapProbs(countProbs, 10, aImData.pCntExtrap);
 
 cnt = 1;
 oList = nan(size(countProbs,1),size(countProbs,2)+2);

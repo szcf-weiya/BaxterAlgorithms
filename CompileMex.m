@@ -63,7 +63,7 @@ basePath = fileparts(mfilename('fullpath'));  % Top directory.
 if aGPP44
     gccStr = 'CXX=g++-4.4';
 else
-    gccStr = '';
+    gccStr = '-compatibleArrayDims';
 end
 
 % Option to compile debug files.

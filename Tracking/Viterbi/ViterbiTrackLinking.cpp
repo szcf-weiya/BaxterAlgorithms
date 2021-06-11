@@ -99,7 +99,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
 
 	while (true) {
 		tree->SetIteration(iter);
-		lout << "Iteration " << iter << endl;
+		// lout << "Iteration " << iter << endl;
 		addedCells = cellTrellis.AddCell();
         
         // No modifications were made in the last iteration.
@@ -159,8 +159,8 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
 		iter++;
 	}
 
-	tree->Print();
-    lout << endl;  // Empty line after all outputs.
+	// tree->Print();
+    // lout << endl;  // Empty line after all outputs.
 
 	// Output.
 	plhs[0] = mxCreateDoubleMatrix(tMax, tree->GetNumCells(), mxREAL);

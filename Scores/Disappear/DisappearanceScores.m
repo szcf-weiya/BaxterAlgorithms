@@ -34,27 +34,27 @@ function oList = DisappearanceScores(aBlobSeq, aImData)
 % See also:
 % AppearanceScores, Track
 
-if aImData.Get('TrackPDisappear') == 0 && ~aImData.Get('TrackMigInOut')
+if aImData.TrackPDisappear == 0 && ~aImData.TrackMigInOut
     % There is no mechanism by which cells can disappear, so an empty list
     % is returned.
     oList = zeros(0,4);
     return
 end
 
-pixelStd = aImData.Get('TrackXSpeedStd');
+pixelStd = aImData.TrackXSpeedStd;
 
 % Pre-allocate a list that may be too long.
-oList = nan(length([aBlobSeq{1:end-1}]), 4);
+oList = nan(sum(cellfun('size', aBlobSeq(1:end-1), 1)), 4);
 cnt = 1;
 for t = 1:length(aBlobSeq)-1  % Cells cannot appear in the last image.
     for i = 1:length(aBlobSeq{t})
-        b = aBlobSeq{t}(i);
+        b = aBlobSeq{t}(i, :);
         
         % Random disappearance.
-        dprob = aImData.Get('TrackPDisappear');
+        dprob = aImData.TrackPDisappear;
         
-        if aImData.Get('TrackMigInOut')
-            [x,y] = b.GetPixelCoordinates();
+        if aImData.TrackMigInOut
+            [x,y] = feval(@(x) x{:}, num2cell(b));
             
             % It is assumed that the cell will have the same shape in the
             % following time point. Furthermore, it is assumed that to
